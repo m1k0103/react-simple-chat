@@ -1,13 +1,20 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import os
 
 
 app = Flask(__name__)
 
 
-@app.route("/send_chat", methods=["POST"])
+@app.route("/send_message",methods=["POST"])
 def send_chat():
-    pass
+    contents = request.get_json()
+    print(contents)
+    if contents["sender"]["username"] == '':
+        return {"action":"fail"}
+    
+    with open("flask-server/chats.txt", "a") as c:
+        c.write(f"{contents["sender"]["username"]} | {contents["message"]["new_message"]}\n")
+    return {"action":"success"}
 
 @app.route("/get_chats")
 def get_chats():
